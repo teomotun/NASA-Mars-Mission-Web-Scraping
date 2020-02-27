@@ -21,13 +21,7 @@ news_p = "Preparation of NASA's next spacecraft to Mars, InSight, has ramped up 
 
 ### JPL Mars Space Images - Featured Image
 
-* Visit the url for JPL Featured Space Image [here](https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars).
-
-* Use splinter to navigate the site and find the image url for the current Featured Mars Image and assign the url string to a variable called `featured_image_url`.
-
-* Make sure to find the image url to the full size `.jpg` image.
-
-* Make sure to save a complete url string for this image.
+* Used splinter to navigate the JPL site [here](https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars) and find the image url for the current Featured Mars Image. I etracted the url and assigned it to a variable.
 
 ```python
 # Example:
