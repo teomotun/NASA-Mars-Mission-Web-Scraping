@@ -1,3 +1,9 @@
+import pandas as pd
+from splinter import Browser
+from bs4 import BeautifulSoup as bs
+from selenium import webdriver
+import tweepy
+
 def init_browser():
     # @NOTE: Replace the path with your actual path to the chromedriver
     executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
@@ -5,7 +11,6 @@ def init_browser():
 
 def scrape_info():
     browser = init_browser()
-
     # NASA Mars News url
     news_url = "https://mars.nasa.gov/news/"
     try:
@@ -15,17 +20,17 @@ def scrape_info():
         article = soup.find("div", class_='list_text')
         news_title = article.find("div", class_="content_title").text
         news_p = article.find("div", class_ ="article_teaser_body").text
-    except Error as e:
+    except:
         pass
-
+    
     # JPL Mars Space Images url
     jps_mars_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
     try:
         browser.visit(jps_mars_url)
         html = browser.html
         soup = bs(html, "html.parser")
-        featured_image_url = soup.find("a", class_='button fancybox')['data-fancybox-href']
-    except Error as e:
+        featured_image_url = 'https://www.jpl.nasa.gov'+soup.find("a", class_='button fancybox')['data-fancybox-href']
+    except:
         pass
     
     # Mars Weather FROM TWITTER
@@ -34,7 +39,7 @@ def scrape_info():
         try:
             with open(filename, 'r') as f:
                 return f.read().strip()
-        except FileNotFoundError:
+        except:
             pass
 
     consumer_key = get_file_contents('consumer_key.py')
@@ -56,14 +61,13 @@ def scrape_info():
     facts_table.columns = ["Description", "Value"]
     facts_table.set_index("Description", inplace=True)
     facts_table.to_csv("Output/mars_facts_table")
-
+    facts_html = facts_table.to_html().replace('\n', '')
+    
     # Mars Hemispheres
     hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
-    titles = []
-    image_url = []
+    browser.visit(hemisphere_url)
     hemisphere_image_urls = []
     try:
-        browser.visit(hemisphere_url)
         html = browser.html
         soup = bs(html, "html.parser")
         for i in soup.find_all("div", class_='description'):
@@ -71,10 +75,11 @@ def scrape_info():
             browser.click_link_by_id('wide-image-toggle')
             result = browser.find_by_xpath('//*[@id="wide-image"]/img')['src']
             hemisphere_image_urls.append({"title": i.h3.text, "img_url": result})
-            browser.visit(hemisphere_url)       
-    except Error as e:
+            browser.visit(hemisphere_url)
+    except:
         pass
-       
+    browser.quit()
+     
     nasa_data = {
         "news_title": news_title,
         "news_paragraph": news_p,
@@ -82,10 +87,7 @@ def scrape_info():
         "mars_weather": mars_weather,
         "facts_html": facts_html,
         "hemisphere_image_urls": hemisphere_image_urls
-    }        
-    
-    # Close the browser after scraping
-    browser.quit()
+    } 
 
     # Return results
     return nasa_data
