@@ -64,7 +64,7 @@ hemisphere_image_urls = [
 
 ## Step 2 - MongoDB and Flask Application
 
-Used MongoDB with Flask templating to a HTML page that displays all of the information that was scraped from the URLs above.
+Used MongoDB with Flask templating to render a HTML page that displays all of the information that was scraped from the URLs above.
 
 * The Flask app contained 2 routes `/` and `/scrape`. 
 
